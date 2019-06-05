@@ -1,53 +1,68 @@
 import com.sun.javafx.PlatformUtil;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
+
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.Select;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 public class HotelBookingTest {
 
-    WebDriver driver = new ChromeDriver();
+	WebDriver driver;
+	static Properties prop=Utilities.prop;
 
-    @FindBy(linkText = "Hotels")
-    private WebElement hotelLink;
+	@FindBy(xpath="//a[contains(text(),'Hotels')]")
+	private WebElement hotelLink;
 
-    @FindBy(id = "Tags")
-    private WebElement localityTextBox;
+	@FindBy(id = "Tags")
+	private WebElement localityTextBox;
 
-    @FindBy(id = "SearchHotelsButton")
-    private WebElement searchButton;
+	@FindBy(id = "SearchHotelsButton")
+	private WebElement searchButton;
 
-    @FindBy(id = "travellersOnhome")
-    private WebElement travellerSelection;
+	@FindBy(id = "travellersOnhome")
+	private WebElement travellerSelection;
+	
+	@BeforeTest
+	public void beforeTestMethods(){
+		try {
+			driver=Utilities.driverinitinalization(driver);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		driver.manage().timeouts().implicitlyWait(100,TimeUnit.SECONDS);
+		PageFactory.initElements(driver, this);
+		driver.get("https://www.cleartrip.com");
+	}
 
-    @Test
-    public void shouldBeAbleToSearchForHotels() {
-        setDriverPath();
 
-        driver.get("https://www.cleartrip.com/");
-        hotelLink.click();
-
-        localityTextBox.sendKeys("Indiranagar, Bangalore");
-
-        new Select(travellerSelection).selectByVisibleText("1 room, 2 adults");
-        searchButton.click();
-
-        driver.quit();
-
-    }
-
-    private void setDriverPath() {
-        if (PlatformUtil.isMac()) {
-            System.setProperty("webdriver.chrome.driver", "chromedriver");
-        }
-        if (PlatformUtil.isWindows()) {
-            System.setProperty("webdriver.chrome.driver", "chromedriver.exe");
-        }
-        if (PlatformUtil.isLinux()) {
-            System.setProperty("webdriver.chrome.driver", "chromedriver_linux");
-        }
-    }
-
+	@Test  
+	public void shouldBeAbleToSearchForHotels() throws InterruptedException {
+		
+		hotelLink.click();
+		
+		//send keys wasn't working in this so used actions class
+		 Actions builder = new Actions(driver);
+	        Actions seriesOfActions = builder.moveToElement(localityTextBox).click().sendKeys(localityTextBox, "Indiranagar, Bangalore");
+	        seriesOfActions.perform();
+	        
+		new Select(travellerSelection).selectByVisibleText("1 room, 2 adults");
+		searchButton.click();
+	}
+	
+	@AfterTest
+	public void afterTestActions(){
+		driver.quit();
+	}
+	
 }

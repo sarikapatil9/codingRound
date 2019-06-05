@@ -4,8 +4,11 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.Select;
 import org.testng.Assert;
+import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import org.testng.log4testng.Logger;
@@ -17,38 +20,40 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.LogManager;
 
+
+
 public class FlightBookingTest {
 	WebDriver driver;
-	static Properties prop=new Properties();
-	
-	@BeforeTest
-	public void driverinitinalization() throws IOException{
-		//place your all framework related test in a properties file
-		FileInputStream fs=new FileInputStream("Framework.properties");
-		prop.load(fs);
-		setDriverPath();
-		driver=new ChromeDriver();
-	}
+	Properties prop=Utilities.prop;
 
+	@BeforeTest
+	public void beforeTestMethods(){
+		try {
+			driver=Utilities.driverinitinalization(driver);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		driver.manage().timeouts().implicitlyWait(100,TimeUnit.SECONDS);
+		PageFactory.initElements(driver, this);
+		driver.get("https://www.cleartrip.com");
+	}
 	@Test
 	public void testThatResultsAppearForAOneWayJourney() {
-		
-		System.out.println("---------------------Url: "+prop.getProperty("URL"));
-		driver.get(prop.getProperty("URL"));
-		waitFor(2000);
-	
-		//we can replace the id if it changes over time at a single place
+
+
+		//we can replace the id at a single place if it changes over time 
 		String oneWayID="OneWay";
 		String fromInputBoxID="FromTag";
 		String toInputBoxID="ToTag";
-		
 
-		
 		driver.findElement(By.id(oneWayID)).click();
 		waitFor(2000);
-		
-		driver.findElement(By.id(fromInputBoxID)).clear();
-		driver.findElement(By.id(fromInputBoxID)).sendKeys("bangalore");
+
+		//send keys wasn't working in this so used actions class
+		WebElement from=driver.findElement(By.id(fromInputBoxID));
+		Actions builder = new Actions(driver);
+		Actions seriesOfActions = builder.moveToElement(from).click().sendKeys(from, "bangalore");
+		seriesOfActions.perform();
 
 		//wait for the auto complete options to appear for the origin
 
@@ -56,20 +61,22 @@ public class FlightBookingTest {
 		List<WebElement> originOptions = driver.findElement(By.id("ui-id-1")).findElements(By.tagName("li"));
 		originOptions.get(0).click();
 
+		//send keys wasn't working in this so used actions class
+		WebElement to=driver.findElement(By.id(toInputBoxID));
 		
-		driver.findElement(By.id(toInputBoxID)).clear();
-		driver.findElement(By.id(toInputBoxID)).sendKeys("delhi");
-
+		seriesOfActions = builder.moveToElement(to).click().sendKeys(to, "delhi");
+		seriesOfActions.perform();
+		
 		//wait for the auto complete options to appear for the destination
-
 		waitFor(2000);
-		
-		WebElement selectDate=driver.findElement(By.xpath("//*[@id='ui-datepicker-div']/div[1]/table/tbody/tr[3]/td[7]/a"));
-		WebElement searchButton=driver.findElement(By.id("SearchBtn"));
-		
 		//select the first item from the destination auto complete list
 		List<WebElement> destinationOptions = driver.findElement(By.id("ui-id-2")).findElements(By.tagName("li"));
 		destinationOptions.get(0).click();
+
+		WebElement selectDate=driver.findElement(By.xpath("//*[@id='ui-datepicker-div']/div[1]/table/tbody/tr[3]/td[7]/a"));
+		WebElement searchButton=driver.findElement(By.id("SearchBtn"));
+		
+		
 
 		selectDate.click();
 
@@ -79,9 +86,6 @@ public class FlightBookingTest {
 		waitFor(5000);
 		//verify that result appears for the provided journey search
 		Assert.assertTrue(isElementPresent(By.className("searchSummary")));
-
-		//close the browser
-		driver.quit();
 
 	}
 
@@ -104,19 +108,10 @@ public class FlightBookingTest {
 		}
 	}
 
-	private void setDriverPath() {
-		switch(prop.getProperty("URL")){
-			case "windows":
-				System.setProperty("webdriver.chrome.driver", "chromedriver.exe");
-				break;
-			case "mac":
-				System.setProperty("webdriver.chrome.driver", "chromedriver");
-				break;
-			case "linux":
-				System.setProperty("webdriver.chrome.driver", "chromedriver_linux");
-			default :
-				System.setProperty("webdriver.chrome.driver", "chromedriver.exe");
-				break;
-		}
+	@AfterTest
+	public void afterTestActions(){
+		driver.quit();
 	}
+
+
 }
