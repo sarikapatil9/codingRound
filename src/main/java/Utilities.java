@@ -3,13 +3,15 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.interactions.Actions;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 public class Utilities {
 	static Properties prop=new Properties();
-	
+	static WebDriver driver;
 	public static void loadProperties() throws IOException{
 		Utilities utility=new Utilities();
 
@@ -18,11 +20,12 @@ public class Utilities {
 	}
 
 	//initialize driver
-	public static WebDriver driverinitinalization(WebDriver driver) throws IOException{
+	public static WebDriver driverinitinalization(WebDriver driverr) throws IOException{
 		//place your all framework related test in a properties file
 		loadProperties();
 		setDriverPath();
-		driver=new ChromeDriver();
+		driverr=new ChromeDriver();
+		driver=driverr;
 		return driver;
 	}
 
@@ -40,5 +43,11 @@ public class Utilities {
 			System.setProperty("webdriver.chrome.driver", "chromedriver.exe");
 			break;
 		}
+	}
+	
+	public static void setText(WebElement we,String text){
+		 Actions builder = new Actions(driver);
+	     Actions seriesOfActions = builder.moveToElement(we).click().sendKeys(we,text);
+	     seriesOfActions.perform();
 	}
 }

@@ -3,10 +3,12 @@ import com.sun.javafx.PlatformUtil;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.PageFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
@@ -16,13 +18,20 @@ public class SignInTest {
 
 	static WebDriver driver;
 	static Properties prop=Utilities.prop;
+	
+	@BeforeTest
+	public void beforeTestMethods(){
+		try {
+			driver=Utilities.driverinitinalization(driver);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		driver.manage().timeouts().implicitlyWait(100,TimeUnit.SECONDS);
+		driver.get(prop.getProperty("URL"));
+	}
 
 	@Test
 	public void shouldThrowAnErrorIfSignInDetailsAreMissing() throws IOException{
-
-		driver=Utilities.driverinitinalization(driver);
-		driver.manage().window().maximize();
-		driver.get(prop.getProperty("URL"));
 
 		driver.findElement(By.linkText("Your trips")).click();
 		driver.findElement(By.id("SignIn")).click();

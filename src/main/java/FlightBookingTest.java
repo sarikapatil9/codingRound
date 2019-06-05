@@ -51,9 +51,7 @@ public class FlightBookingTest {
 
 		//send keys wasn't working in this so used actions class
 		WebElement from=driver.findElement(By.id(fromInputBoxID));
-		Actions builder = new Actions(driver);
-		Actions seriesOfActions = builder.moveToElement(from).click().sendKeys(from, "bangalore");
-		seriesOfActions.perform();
+		Utilities.setText(from,"bangalore");
 
 		//wait for the auto complete options to appear for the origin
 
@@ -61,11 +59,9 @@ public class FlightBookingTest {
 		List<WebElement> originOptions = driver.findElement(By.id("ui-id-1")).findElements(By.tagName("li"));
 		originOptions.get(0).click();
 
-		//send keys wasn't working in this so used actions class
+		//send keys wasn't working in this so used actions class, which is in utilities class
 		WebElement to=driver.findElement(By.id(toInputBoxID));
-		
-		seriesOfActions = builder.moveToElement(to).click().sendKeys(to, "delhi");
-		seriesOfActions.perform();
+		Utilities.setText(to,"delhi");
 		
 		//wait for the auto complete options to appear for the destination
 		waitFor(2000);

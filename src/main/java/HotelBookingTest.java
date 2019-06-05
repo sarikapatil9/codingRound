@@ -52,10 +52,8 @@ public class HotelBookingTest {
 		hotelLink.click();
 		
 		//send keys wasn't working in this so used actions class
-		 Actions builder = new Actions(driver);
-	        Actions seriesOfActions = builder.moveToElement(localityTextBox).click().sendKeys(localityTextBox, "Indiranagar, Bangalore");
-	        seriesOfActions.perform();
-	        
+		Utilities.setText(localityTextBox,"Indiranagar, Bangalore");
+		
 		new Select(travellerSelection).selectByVisibleText("1 room, 2 adults");
 		searchButton.click();
 	}
