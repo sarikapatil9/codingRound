@@ -9,13 +9,15 @@ import java.io.IOException;
 
 import org.openqa.selenium.By;
 import org.testng.Assert;
+import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 import cleartrip.util.BaseTest;
 
+@Listeners(cleartrip.testcase.TestNGListenerClass.class)
 public class SignTest extends BaseTest{
 	
-	//@Test
+	@Test
 	public void shouldThrowAnErrorIfSignInDetailsAreMissing() throws IOException, InterruptedException{
 
 		
@@ -44,7 +46,7 @@ public class SignTest extends BaseTest{
 		
 	}
 	
-	@Test 
+	//@Test()
 	public void testThatResultsAppearForAOneWayJourney(){
 		FlightBookingPage flightBooking=new FlightBookingPage(driver);
 		flightBooking.clickOnoneWay();
