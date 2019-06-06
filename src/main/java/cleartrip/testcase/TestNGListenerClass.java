@@ -50,7 +50,6 @@ public class TestNGListenerClass extends BaseTest implements ITestListener {
 		// TODO Auto-generated method stub
 		System.out.println("test :"+arg0.getName()+" PASSED");
 		
-		
 	}
 
 }

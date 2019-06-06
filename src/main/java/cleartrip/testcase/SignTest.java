@@ -17,7 +17,8 @@ import cleartrip.util.BaseTest;
 @Listeners(cleartrip.testcase.TestNGListenerClass.class)
 public class SignTest extends BaseTest{
 	
-	@Test
+	@Test(priority=1,groups={"signinTests","regression"},description="verify and error is displying"
+			+ " we user signs in without usrename and password")
 	public void shouldThrowAnErrorIfSignInDetailsAreMissing() throws IOException, InterruptedException{
 
 		
@@ -34,7 +35,7 @@ public class SignTest extends BaseTest{
 		
 	}
 	
-	//@Test
+	@Test(priority=3,groups={"SearcforHotelTests","regression"},description="verify user is able to search for hotels")
 	public void shouldBeAbleToSearchForHotels(){
 		HotelBookingPage hotelBooking=new HotelBookingPage(driver);
 		hotelBooking.clickOnHotelLink();
@@ -46,7 +47,7 @@ public class SignTest extends BaseTest{
 		
 	}
 	
-	//@Test()
+	@Test(priority=2,groups={"searchforflightsTests","regression"},description="verify user is able to search for flights")
 	public void testThatResultsAppearForAOneWayJourney(){
 		FlightBookingPage flightBooking=new FlightBookingPage(driver);
 		flightBooking.clickOnoneWay();
